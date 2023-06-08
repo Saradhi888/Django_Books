@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
-from rest_framework import permissions
+from rest_framework import authentication, permissions
 from .models import Book
 from django.core import serializers
 import json
@@ -16,8 +16,9 @@ from .serializer import BookSerializer
 # Create your views here.
 @method_decorator(csrf_exempt, name='dispatch')
 class BookView(APIView):
-
-    permission_classes = [permissions.IsAuthenticated]
+    queryset = Book.objects.all()
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.DjangoModelPermissions]
     def get(self, request, *args, **kwargs):
         if kwargs.get('book_id'):
             book = Book.objects.get(pk=kwargs.get('book_id'))
@@ -40,6 +41,7 @@ class BookView(APIView):
 
 
 class UpdateBookView(APIView):
+
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
