@@ -17,7 +17,8 @@ from .serializer import BookSerializer
 @method_decorator(csrf_exempt, name='dispatch')
 class BookView(APIView):
     queryset = Book.objects.all()
-    authentication_classes = [authentication.SessionAuthentication]
+    authentication_classes = [authentication.SessionAuthentication,
+                              authentication.TokenAuthentication]
     permission_classes = [permissions.DjangoModelPermissions]
     def get(self, request, *args, **kwargs):
         if kwargs.get('book_id'):
